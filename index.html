@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Fikih Kelas 5 MI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Arabic style friendly font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            min-height: 100vh;
+        }
+        .font-display {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+        /* Printable style overrides */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-area, #printable-area * {
+                visibility: visible;
+            }
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased relative pb-12">
+
+    <!-- Canvas Confetti -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+    <!-- Header Navigation Bar -->
+    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showScreen('home-screen')">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
+                    <i class="fa-solid fa-book-quran text-2xl text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-xl md:text-2xl font-bold leading-tight">QUIZ FIKIH KELAS 5 MI</h1>
+                    <p class="text-xs text-emerald-100 hidden sm:block">Guru Pengampu: Muhammad Yunus, S.Pd.I</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="openGuruModal()" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-semibold text-xs sm:text-sm px-3 py-2 rounded-xl transition-all shadow-md flex items-center space-x-1">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Portal Guru</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pt-6">
+
+        <!-- 1. HOME SCREEN / PILIH BAB -->
+        <section id="home-screen" class="space-y-6">
+            <!-- Welcome Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-emerald-100 relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-mosque text-9xl text-emerald-600"></i>
+                </div>
+                <div class="max-w-2xl">
+                    <span class="inline-block bg-emerald-100 text-emerald-800 font-semibold text-xs px-3 py-1 rounded-full mb-3">
+                        <i class="fa-solid fa-star text-yellow-500 mr-1"></i> Pembelajaran Interaktif Fikih
+                    </span>
+                    <h2 class="font-display text-2xl md:text-4xl font-bold text-slate-800 mb-3 leading-snug">
+                        Selamat Datang di Kuis Fikih Interaktif! 🕌
+                    </h2>
+                    <p class="text-slate-600 text-sm md:text-base mb-6">
+                        Mari tingkatkan pemahaman syariat Islam dengan latihan soal seru. Pilih Bab pembelajaran, masukkan nama lengkapmu, dan mulailah kuis!
+                    </p>
+
+                    <!-- Student Profile Form -->
+                    <div class="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 mb-6">
+                        <label class="block font-semibold text-xs sm:text-sm text-emerald-900 mb-2">
+                            <i class="fa-solid fa-user-graduate mr-1"></i> NAMA LENGKAP SISWA (Otomatis Kapital):
+                        </label>
+                        <input type="text" id="student-name" placeholder="CONTOH: AHMAD FAUZI"
+                            class="w-full px-4 py-3 rounded-xl border border-emerald-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-bold uppercase tracking-wide bg-white text-slate-800 text-sm sm:text-base transition"
+                            oninput="this.value = this.value.toUpperCase()">
+                        <p id="name-error" class="text-red-500 text-xs mt-1 hidden font-semibold">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> Silakan isi nama terlebih dahulu sebelum memilih BAB!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chapter Selection Grid -->
+            <div>
+                <h3 class="font-display text-xl font-bold text-slate-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-layer-group text-emerald-600 mr-2"></i> Pilih Materi Pembelajaran (BAB)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- BAB 1 -->
+                    <div onclick="startQuiz(1)" class="bg-white p-5 rounded-2xl shadow-md border-2 border-transparent hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer group flex items-start space-x-4">
+                        <div class="bg-emerald-100 text-emerald-600 p-4 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-hand-holding-hand text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">BAB 1</span>
+                                <span class="text-xs text-slate-500 font-medium">25 Soal</span>
+                            </div>
+                            <h4 class="font-display font-bold text-lg text-slate-800 mt-1 group-hover:text-emerald-700">Zakat</h4>
+                            <p class="text-xs text-slate-500 mt-1">Zakat Fitrah, Zakat Maal, Syarat, Rukun & Niat.</p>
+                        </div>
+                    </div>
+
+                    <!-- BAB 2 -->
+                    <div onclick="startQuiz(2)" class="bg-white p-5 rounded-2xl shadow-md border-2 border-transparent hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer group flex items-start space-x-4">
+                        <div class="bg-blue-100 text-blue-600 p-4 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-box-open text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">BAB 2</span>
+                                <span class="text-xs text-slate-500 font-medium">25 Soal</span>
+                            </div>
+                            <h4 class="font-display font-bold text-lg text-slate-800 mt-1 group-hover:text-blue-700">Infaq & Sedekah</h4>
+                            <p class="text-xs text-slate-500 mt-1">Pengertian, Perbedaan, Ketentuan & Hikmah Amal.</p>
+                        </div>
+                    </div>
+
+                    <!-- BAB 3 -->
+                    <div onclick="startQuiz(3)" class="bg-white p-5 rounded-2xl shadow-md border-2 border-transparent hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer group flex items-start space-x-4">
+                        <div class="bg-amber-100 text-amber-600 p-4 rounded-2xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-cow text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md">BAB 3</span>
+                                <span class="text-xs text-slate-500 font-medium">25 Soal</span>
+                            </div>
+                            <h4 class="font-display font-bold text-lg text-slate-800 mt-1 group-hover:text-amber-700">Kurban</h4>
+                            <p class="text-xs text-slate-500 mt-1">Hukum Kurban, Syarat Hewan, Waktu & Pembagian Daging.</p>
+                        </div>
+                    </div>
+
+                    <!-- BAB 4 -->
+                    <div onclick="startQuiz(4)" class="bg-white p-5 rounded-2xl shadow-md border-2 border-transparent hover:border-emerald-500 hover:shadow-xl transition-all cursor-pointer group flex items-start space-x-4">
+                        <div class="bg-purple-100 text-purple-600 p-4 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-kaaba text-3xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md">BAB 4</span>
+                                <span class="text-xs text-slate-500 font-medium">25 Soal</span>
+                            </div>
+                            <h4 class="font-display font-bold text-lg text-slate-800 mt-1 group-hover:text-purple-700">Haji & Umrah</h4>
+                            <p class="text-xs text-slate-500 mt-1">Rukun Haji/Umrah, Wajib Haji, Miqat & Tata Cara.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. QUIZ INTERACTIVE SCREEN -->
+        <section id="quiz-screen" class="hidden space-y-4">
+            <!-- Quiz Progress & Info Topbar -->
+            <div class="bg-white p-4 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3 border border-slate-100">
+                <div>
+                    <span id="quiz-bab-badge" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">
+                        BAB 1: ZAKAT
+                    </span>
+                    <h3 id="quiz-student-display" class="text-sm font-bold text-slate-700 mt-1">SISWA: -</h3>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 font-semibold block">PROGRESS</span>
+                        <span id="quiz-progress-text" class="font-display font-bold text-emerald-600 text-base">Soal 1 / 25</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden">
+                <div id="quiz-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <span id="question-difficulty-tag" class="text-xs font-semibold px-3 py-1 rounded-md bg-blue-50 text-blue-600">
+                        Mudah
+                    </span>
+                    <span class="text-xs text-slate-400">Pilih salah satu jawaban yang benar</span>
+                </div>
+
+                <!-- Soal Text -->
+                <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-relaxed">
+                    Pertanyaan akan tampil di sini...
+                </h3>
+
+                <!-- Options Grid -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Instant Feedback Box -->
+                <div id="feedback-box" class="mt-6 p-4 rounded-2xl hidden transition-all border">
+                    <div id="feedback-status" class="font-bold text-base mb-1 flex items-center">
+                        <!-- Correct/Incorrect Title -->
+                    </div>
+                    <p id="feedback-explanation" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <!-- Pembahasan -->
+                    </p>
+                    <button id="next-btn" onclick="nextQuestion()" class="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition shadow-md w-full sm:w-auto flex items-center justify-center space-x-2">
+                        <span>Soal Berikutnya</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. RESULT & CELEBRATION SCREEN -->
+        <section id="result-screen" class="hidden space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl text-center border border-slate-100 relative">
+                <!-- Trophy Icon / Badge -->
+                <div id="score-badge-icon" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-4xl mb-4 bg-yellow-100 text-yellow-600">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h2 class="font-display text-2xl md:text-3xl font-bold text-slate-800 mb-1">Hasil Kuis Fikih</h2>
+                <p id="result-student-name" class="text-slate-500 font-semibold text-sm mb-4">NAMA SISWA</p>
+
+                <!-- Score Container -->
+                <div class="bg-slate-50 rounded-2xl p-6 max-w-sm mx-auto mb-6 border border-slate-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Nilai Akhir Anda</span>
+                    <div id="result-score-number" class="font-display text-5xl md:text-6xl font-bold text-emerald-600 my-2">0</div>
+                    <span id="result-status-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                        Lulus / Tuntas
+                    </span>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-2 max-w-md mx-auto mb-6 text-center text-xs sm:text-sm">
+                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                        <span class="block text-slate-500 text-xs">Benar</span>
+                        <span id="result-correct-count" class="font-bold text-emerald-600 text-lg">0</span>
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-xl border border-red-100">
+                        <span class="block text-slate-500 text-xs">Salah</span>
+                        <span id="result-wrong-count" class="font-bold text-red-600 text-lg">0</span>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <span class="block text-slate-500 text-xs">Total Soal</span>
+                        <span class="font-bold text-blue-600 text-lg">25</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="showReviewScreen()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-3 rounded-xl transition shadow flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Pembahasan Soal</span>
+                    </button>
+                    <button onclick="printStudentReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm px-5 py-3 rounded-xl transition shadow flex items-center space-x-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak Rapor Kuis</span>
+                    </button>
+                    <button onclick="showScreen('home-screen')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm px-5 py-3 rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Menu Utama</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. REVIEW ANSWERS SCREEN -->
+        <section id="review-screen" class="hidden space-y-6">
+            <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow">
+                <h3 class="font-display text-xl font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-magnifying-glass-chart text-emerald-600 mr-2"></i> Pembahasan Lengkap Soal
+                </h3>
+                <button onclick="showScreen('result-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Hasil
+                </button>
+            </div>
+
+            <!-- Review Items Container -->
+            <div id="review-list-container" class="space-y-4">
+                <!-- Dynamic Review Cards -->
+            </div>
+        </section>
+
+        <!-- 5. PORTAL GURU DASHBOARD -->
+        <section id="guru-screen" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+                <div class="flex flex-wrap justify-between items-center mb-6 pb-4 border-b border-slate-100 gap-3">
+                    <div>
+                        <span class="bg-yellow-100 text-yellow-800 font-bold text-xs px-3 py-1 rounded-full">Dashboard Guru</span>
+                        <h2 class="font-display text-2xl font-bold text-slate-800 mt-1">Rekapitulasi Nilai Siswa</h2>
+                        <p class="text-xs text-slate-500">Guru Pengampu: <span class="font-semibold text-slate-700">Muhammad Yunus, S.Pd.I.</span></p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <span>Export Excel (CSV)</span>
+                        </button>
+                        <button onclick="printGuruReport()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Cetak Laporan Resmi</span>
+                        </button>
+                        <button onclick="showScreen('home-screen')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2.5 rounded-xl transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="guru-search-input" placeholder="Cari Nama Siswa..." onkeyup="renderGuruTable()"
+                            class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <select id="guru-filter-bab" onchange="renderGuruTable()" class="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                            <option value="ALL">Semua BAB Pembelajaran</option>
+                            <option value="BAB 1: ZAKAT">BAB 1: ZAKAT</option>
+                            <option value="BAB 2: INFAQ DAN SEDEKAH">BAB 2: INFAQ DAN SEDEKAH</option>
+                            <option value="BAB 3: KURBAN">BAB 3: KURBAN</option>
+                            <option value="BAB 4: HAJI DAN UMRAH">BAB 4: HAJI DAN UMRAH</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Rekap Table -->
+                <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-600 uppercase font-semibold text-xs border-b border-slate-200">
+                                <th class="p-3">No</th>
+                                <th class="p-3">Tanggal & Waktu</th>
+                                <th class="p-3">Nama Siswa</th>
+                                <th class="p-3">Materi (BAB)</th>
+                                <th class="p-3 text-center">Nilai</th>
+                                <th class="p-3 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guru-table-body" class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 flex justify-between items-center text-xs text-slate-400">
+                    <span id="rekap-count">Total Data: 0 Rekaman</span>
+                    <button onclick="clearAllData()" class="text-red-500 hover:underline">Clear Data (Reset)</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- GURU PASSCODE MODAL -->
+    <div id="guru-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 space-y-4">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-2 text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="font-display font-bold text-lg text-slate-800">Verifikasi Guru</h3>
+                <p class="text-xs text-slate-500">Masukkan Passcode Keamanan Portal Guru</p>
+            </div>
+            <div>
+                <input type="password" id="guru-passcode" placeholder="Passcode Default: 1234"
+                    class="w-full text-center tracking-widest text-lg font-bold px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <p id="passcode-error" class="text-red-500 text-xs mt-1 text-center hidden">Passcode Salah! Coba lagi.</p>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="closeGuruModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-2.5 rounded-xl transition">
+                    Batal
+                </button>
+                <button onclick="verifyGuruPasscode()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2.5 rounded-xl transition shadow">
+                    Masuk
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINTABLE AREA FOR REPORTS & RAPOR -->
+    <div id="printable-area" class="hidden">
+        <!-- Content inserted dynamically during print -->
+    </div>
+
+    <!-- AUDIO & APPS SCRIPT -->
+    <script>
+        // Web Audio API Sound Effects Synthesizer (No external URL dependency)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3); // A2
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'cheer') {
+                // Happy chord chime
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = freq;
+                    g.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.08);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.08 + 0.5);
+                    o.start(audioCtx.currentTime + idx * 0.08);
+                    o.stop(audioCtx.currentTime + idx * 0.08 + 0.5);
+                });
+            }
+        }
+
+        // CONFETTI ANIMATION (Custom Lightweight Canvas)
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let confettiParticles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function triggerConfetti() {
+            confettiParticles = [];
+            const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+            for (let i = 0; i < 120; i++) {
+                confettiParticles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    angle: Math.random() * 360
+                });
+            }
+            animateConfetti();
+        }
+
+        let confettiAnimationId;
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            confettiParticles.forEach(p => {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.angle += 2;
+                if (p.y < canvas.height) active = true;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.angle * Math.PI) / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+            });
+
+            if (active) {
+                confettiAnimationId = requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        // BANK SOAL FIKIH KELAS 5 MI (25 SOAL PER BAB: 5 MUDAH, 10 SEDANG, 10 HOTS)
+        const BANK_SOAL = {
+            1: {
+                title: "BAB 1: ZAKAT",
+                questions: [
+                    // EASY (5)
+                    { text: "Secara bahasa, kata Zakat memiliki arti...", options: ["A. Menyiksakan harta", "B. Suci, tumbuh, dan berkembang", "C. Menghabiskan rezeki", "D. Meminta pinjaman"], answer: 1, difficulty: "Mudah", explanation: "Zakat secara bahasa artinya suci, bersih, tumbuh, dan berkembang." },
+                    { text: "Zakat yang wajib dikeluarkan setiap jiwa Muslim menjelang Hari Raya Idul Fitri dinamakan zakat...", options: ["A. Maal", "B. Fitrah", "C. An'am", "D. Emas"], answer: 1, difficulty: "Mudah", explanation: "Zakat Fitrah adalah zakat jiwa yang dikeluarkan pada bulan Ramadan hingga sebelum salat Idul Fitri." },
+                    { text: "Kadar zakat fitrah berupa makanan pokok untuk setiap orang adalah sebanyak...", options: ["A. 1 kg", "B. 2,5 kg atau 3,5 liter", "C. 5 kg", "D. 10 kg"], answer: 1, difficulty: "Mudah", explanation: "Kadar zakat fitrah per jiwa adalah 1 sha' atau setara dengan 2,5 kg / 3,5 liter beras." },
+                    { text: "Orang yang berhak menerima harta zakat dinamakan...", options: ["A. Muzakki", "B. Mustahik", "C. Amil", "D. Munfiq"], answer: 1, difficulty: "Mudah", explanation: "Mustahik adalah sebutan bagi 8 golongan orang yang berhak menerima zakat." },
+                    { text: "Batas minimal jumlah harta yang wajib dikeluarkan zakatnya disebut...", options: ["A. Nisab", "B. Haul", "C. Kadar", "D. Infaq"], answer: 0, difficulty: "Mudah", explanation: "Nisab adalah batas minimal jumlah kepemilikan harta sehingga wajib dikeluarkan zakatnya." },
+
+                    // MEDIUM (10)
+                    { text: "Pak Ahmad mengeluarkan zakat atas harta simpanannya yang telah mencapai kepemilikan 1 tahun. Batas waktu 1 tahun tersebut dinamakan...", options: ["A. Nisab", "B. Haul", "C. Qada", "D. Hijriah"], answer: 1, difficulty: "Sedang", explanation: "Haul adalah syarat batas waktu kepemilikan harta selama satu tahun penuh dalam kalender Hijriah." },
+                    { text: "Orang yang bertugas mengumpulkan dan mendistribusikan zakat disebut...", options: ["A. Muazin", "B. Amil", "C. Garim", "D. Ibnus Sabil"], answer: 1, difficulty: "Sedang", explanation: "Amil zakat adalah panitia resmi yang diberi kewenangan untuk mengelola dan menyalurkan zakat." },
+                    { text: "Di bawah ini yang BUKAN merupakan golongan penerima zakat (Mustahik) menurut Surah At-Taubah ayat 60 adalah...", options: ["A. Fakir dan Miskin", "B. Orang kaya yang dermawan", "C. Mualaf", "D. Ibnu Sabil"], answer: 1, difficulty: "Sedang", explanation: "Orang kaya tidak berhak menerima zakat karena mereka berkewajiban menjadi Muzakki (pemberi zakat)." },
+                    { text: "Hukum mengeluarkan zakat fitrah bagi setiap orang Islam yang mampu adalah...", options: ["A. Sunnah Muakkad", "B. Fardu 'Ain", "C. Fardu Kifayah", "D. Mubah"], answer: 1, difficulty: "Sedang", explanation: "Mengeluarkan zakat fitrah merupakan kewajiban individu (Fardu 'Ain) bagi Muslim yang memiliki kelebihan makanan." },
+                    { text: "Zakat Maal wajib dikeluarkan atas harta emas yang telah memenuhi nisab yaitu sebesar...", options: ["A. 50 gram", "B. 85 gram", "C. 100 gram", "D. 200 gram"], answer: 1, difficulty: "Sedang", explanation: "Nisab zakat emas adalah 85 gram emas murni dengan kadar zakat sebesar 2,5%." },
+                    { text: "Orang yang memiliki banyak hutang untuk memenuhi kebutuhan hidup yang halal dinamakan...", options: ["A. Gharim", "B. Riqab", "C. Mualaf", "D. Amil"], answer: 0, difficulty: "Sedang", explanation: "Gharim adalah orang yang terlilit hutang bukan untuk kemaksiatan dan tidak sanggup melunasinya." },
+                    { text: "Di bawah ini yang merupakan waktu yang afdal (paling utama) untuk membayar zakat fitrah adalah...", options: ["A. Awal bulan Ramadan", "B. Setelah salat Idul Fitri", "C. Setelah subuh hingga sebelum salat Idul Fitri", "D. Pertengahan bulan Ramadan"], answer: 2, difficulty: "Sedang", explanation: "Waktu afdal membayar zakat fitrah adalah setelah salat Subuh di hari raya hingga sebelum pelaksanaan salat Idul Fitri." },
+                    { text: "Jika seseorang membayarkan zakat fitrah SETELAH pelaksanaan salat Idul Fitri tanpa udzur syari, maka hukum pembayarannya dianggap sebagai...", options: ["A. Zakat Maal", "B. Sedekah biasa", "C. Wakaf", "D. Fidyah"], answer: 1, difficulty: "Sedang", explanation: "Membayar zakat fitrah setelah salat Idul Fitri nilainya bergeser menjadi sedekah biasa." },
+                    { text: "Harta hasil pertanian yang diairi dengan air hujan nisabnya zakatnya sebesar...", options: ["A. 2,5%", "B. 5%", "C. 10%", "D. 20%"], answer: 2, difficulty: "Sedang", explanation: "Hasil pertanian yang diairi alami (air hujan/sungai) kadar zakatnya 10%, sedangkan yang menggunakan biaya irigasi sebesar 5%." },
+                    { text: "Mualaf berhak menerima zakat dengan tujuan untuk...", options: ["A. Membayar hutangnya", "B. Meneguhkan hatinya dalam memeluk agama Islam", "C. Membeli hewan kurban", "D. Perjalanan jauh"], answer: 1, difficulty: "Sedang", explanation: "Zakat kepada mualaf bertujuan untuk menguatkan iman dan dorongan keislaman mereka." },
+
+                    // HOTS (10)
+                    { text: "Bu Aisyah adalah seorang pedagang pakaian. Setelah dihitung selama 1 tahun, modal dan keuntungannya mencapai Rp 100 juta (melebihi nisab 85 gram emas). Berapakah zakat perdagangan yang wajib dikeluarkan Bu Aisyah?", options: ["A. Rp 1.000.000", "B. Rp 2.500.000", "C. Rp 5.000.000", "D. Rp 10.000.000"], answer: 1, difficulty: "HOTS", explanation: "Kadar zakat perdagangan sama dengan zakat emas yaitu 2,5%. Maka 2,5% x Rp 100.000.000 = Rp 2.500.000." },
+                    { text: "Seorang bayi lahir pada malam takbiran Idul Fitri sebelum terbenam matahari. Bagaimanakah kewajiban zakat fitrah bagi bayi tersebut?", options: ["A. Wajib dibayarkan zakat fitrahnya oleh orang tuanya", "B. Tidak wajib karena belum baligh", "C. Sunnah dibayarkan", "D. Bebas dari zakat"], answer: 0, difficulty: "HOTS", explanation: "Syarat wajib zakat fitrah adalah menemui bagian dari bulan Ramadan dan Syawal. Bayi lahir sebelum terbenam matahari akhir Ramadan wajib dizakati." },
+                    { text: "Pak Budi memiliki hasil panen padi dengan sistem irigasi berbayar sebanyak 2 ton beras. Mengapa kadar zakat irigasi berbayar (5%) lebih kecil dibanding pengairan air hujan (10%)?", options: ["A. Karena air hujan lebih suci", "B. Karena pengairan irigasi mengeluarkan biaya dan tenaga tambahan", "C. Karena panen irigasi lebih sedikit", "D. Karena aturan pasar"], answer: 1, difficulty: "HOTS", explanation: "Islam memberikan keringanan zakat (5%) pada irigasi berbayar untuk mengapresiasi biaya operasional yang dikeluarkan petani." },
+                    { text: "Seorang musafir terdampar di kota lain dan kehabisan biaya untuk pulang ke kampung halamannya padahal ia orang kaya di kampungnya. Dalam fikih zakat, ia masuk dalam kategori...", options: ["A. Fakir", "B. Gharim", "C. Ibnu Sabil", "D. Mualaf"], answer: 2, difficulty: "HOTS", explanation: "Ibnu Sabil adalah orang yang kehabisan bekal dalam perjalanan yang bertujuan baik (halal), meskipun di daerah asalnya kaya." },
+                    { text: "Mengapa pembayaran zakat dapat mengurangi kesenjangan sosial antara orang kaya dan orang miskin di masyarakat?", options: ["A. Karena zakat membuat orang miskin menjadi kaya mendadak", "B. Karena zakat mengalirkan redistribusi harta dari yang mampu kepada yang membutuhkan", "C. Karena zakat menghapuskan semua hutang negara", "D. Karena zakat bersifat wajib untuk seluruh warga dunia"], answer: 1, difficulty: "HOTS", explanation: "Zakat berfungsi sebagai sarana pemerataan ekonomi dan pemenuhan kebutuhan dasar masyarakat kurang mampu." },
+                    { text: "Apabila panitia amil zakat menggunakan sebagian uang zakat untuk operasional seperti sewa kendaraan angkut logistik bantuan zakat, bagaimanakah hukumnya dalam Fikih?", options: ["A. Haram, karena zakat harus utuh", "B. Boleh, karena Amil termasuk salah satu dari 8 asnaf penerima zakat", "C. Batal seluruh zakatnya", "D. Harus diganti oleh kepala desa"], answer: 1, difficulty: "HOTS", explanation: "Amil berhak mendapatkan bagian zakat dari porsi hak amil untuk mendukung efektivitas pengelolaan zakat." },
+                    { text: "Pak Hasan membeli emas 100 gram untuk perhiasan istrinya yang dipakai sehari-hari dalam batas wajar. Apakah emas perhiasan terpakai tersebut wajib dizakati?", options: ["A. Wajib dizakati setiap bulan", "B. Mayoritas ulama berpendapat tidak wajib zakat jika dipakai wajar dan tidak disimpan", "C. Wajib zakat 10%", "D. Wajib dijual"], answer: 1, difficulty: "HOTS", explanation: "Perhiasan wanita yang dipakai sehari-hari secara wajar (bukan komoditas simpanan/investasi) tidak dikenakan zakat menurut mayoritas ulama." },
+                    { text: "Analisis dampak spiritual dari ibadah zakat bagi seorang Muzakki (pemberi zakat) adalah...", options: ["A. Membersihkan jiwa dari sifat kikir dan sombong", "B. Mendapatkan pujian dari tetangga", "C. Menjadikan harta tidak bisa dihitung", "D. Menghilangkan kewajiban salat"], answer: 0, difficulty: "HOTS", explanation: "Secara spiritual, zakat berfungsi membersihkan harta serta menyucikan hati pemberinya dari sifat tamak dan kikir." },
+                    { text: "Apabila seseorang meninggal dunia di akhir Ramadan sebelum sempat dibayarkan zakat fitrahnya, kewajiban penyelesaian zakatnya adalah...", options: ["A. Gugur dengan sendirinya", "B. Wajib dikeluarkan dari harta peninggalannya oleh ahli waris", "C. Diganti dengan puasa 3 hari", "D. Ditanggung pemerintah"], answer: 1, difficulty: "HOTS", explanation: "Hutang kepada Allah (termasuk zakat) harus dilunasi terlebih dahulu menggunakan harta peninggalan almarhum sebelum dibagi waris." },
+                    { text: "Apakah perbedaan mendasar antara Zakat Fitrah dan Zakat Maal dilihat dari objek kewajibannya?", options: ["A. Zakat Fitrah menyucikan jiwa; Zakat Maal menyucikan harta", "B. Zakat Fitrah untuk uang; Zakat Maal untuk beras", "C. Zakat Fitrah hukumnya sunnah; Zakat Maal hukumnya haram", "D. Zakat Fitrah untuk orang tua; Zakat Maal untuk anak-anak"], answer: 0, difficulty: "HOTS", explanation: "Zakat Fitrah terikat dengan jiwa (setiap individu muslim), sedangkan Zakat Maal terikat dengan syarat kepemilikan harta benda." }
+                ]
+            },
+            2: {
+                title: "BAB 2: INFAQ DAN SEDEKAH",
+                questions: [
+                    // EASY (5)
+                    { text: "Membelanjakan atau mengeluarkan sebagian harta untuk kepentingan yang diperintahkan Islam disebut...", options: ["A. Infaq", "B. Riba", "C. Nisab", "D. Wajib"], answer: 0, difficulty: "Mudah", explanation: "Infaq berasal dari kata anfaqa yang berarti mengeluarkan atau membelanjakan harta di jalan Allah." },
+                    { text: "Memberikan bantuan baik berupa harta maupun non-harta (seperti senyum dan tenaga) secara ikhlas dinamakan...", options: ["A. Zakat", "B. Sedekah", "C. Pajak", "D. Denda"], answer: 1, difficulty: "Mudah", explanation: "Sedekah cakupannya lebih luas dari infaq, mencakup pemberian berupa benda maupun non-benda (kebaikan)." },
+                    { text: "Hukum dasar melakukan infaq dan sedekah dalam ajaran Islam adalah...", options: ["A. Haram", "B. Makruh", "C. Sunnah", "D. Wajib 'Ain"], answer: 2, difficulty: "Mudah", explanation: "Hukum dasar infaq dan sedekah adalah sunnah yang sangat dianjurkan (Sunnah Muakkad)." },
+                    { text: "Senyum ramah yang kita berikan kepada saudara sesama Muslim bernilai...", options: ["A. Sedekah", "B. Zakat Maal", "C. Dosa", "D. Utang"], answer: 0, difficulty: "Mudah", explanation: "Hadis Nabi menyebutkan: Senyummu di hadapan saudaramu adalah sedekah." },
+                    { text: "Sedekah yang pahalanya terus mengalir meskipun orang yang bersedekah telah meninggal dunia disebut...", options: ["A. Sedekah subuh", "B. Sedekah Jariyah", "C. Sedekah sirri", "D. Sedekah fitrah"], answer: 1, difficulty: "Mudah", explanation: "Sedekah Jariyah adalah amalan yang manfaatnya berkelanjutan sehingga pahalanya terus mengalir." },
+
+                    // MEDIUM (10)
+                    { text: "Di bawah ini yang merupakan contoh Sedekah Jariyah adalah...", options: ["A. Memberi makanan yang langsung habis dimakan", "B. Menyumbang pembangunan masjid atau sumur umum", "C. Membelikan es krim untuk teman", "D. Meminjamkan pensil"], answer: 1, difficulty: "Sedang", explanation: "Pembangunan masjid atau sumur manfaatnya terus digunakan orang banyak dalam waktu lama." },
+                    { text: "Salah satu perbedaan utama antara Zakat dan Sedekah adalah...", options: ["A. Zakat hukumnya sunnah, sedekah hukumnya wajib", "B. Zakat memiliki nisab & kadar tertentu, sedangkan sedekah tidak dibatasi", "C. Sedekah hanya boleh dengan uang", "D. Zakat hanya boleh untuk orang kaya"], answer: 1, difficulty: "Sedang", explanation: "Zakat diatur ketat oleh nisab, kadar, dan waktu. Sedekah bersifat fleksibel kapan saja dan berapa saja." },
+                    { text: "Sikap yang dapat merusak dan menghapuskan pahala sedekah adalah...", options: ["A. Ikhlas karena Allah", "B. Menyebut-nyebut pemberian (Riya) dan menyakiti perasaan penerima", "C. Merahasiakan sedekah", "D. Mendoakan penerima"], answer: 1, difficulty: "Sedang", explanation: "Surah Al-Baqarah ayat 264 melarang membatalkan pahala sedekah dengan menyebut-nyebutnya (al-mann) dan menyakiti hati penerima." },
+                    { text: "Memberikan pertolongan menyeberangkan jalan kepada orang tua termasuk bentuk sedekah dalam bentuk...", options: ["A. Harta benda", "B. Tenaga dan perbuatan baik", "C. Makanan", "D. Pikiran"], answer: 1, difficulty: "Sedang", explanation: "Sedekah tidak terbatas pada harta, tetapi mencakup segala bentuk bantuan dan fisik yang bermanfaat." },
+                    { text: "Ungkapan 'Tangan di atas lebih baik daripada tangan di bawah' memiliki makna...", options: ["A. Orang yang memberi lebih baik daripada orang yang meminta", "B. Tangan harus diangkat saat berdoa", "C. Meminta-minta adalah perbuatan terpuji", "D. Posisi duduk yang benar"], answer: 0, difficulty: "Sedang", explanation: "Hadis ini memotivasi umat Islam untuk menjadi pemberi (dermawan) dan menghindari meminta-minta." },
+                    { text: "Membeli perlengkapan sekolah untuk anak yatim piatu termasuk keutamaan infaq dalam kategori...", options: ["A. Keagamaan dan sosial", "B. Pemborosan", "C. Pamer harta", "D. Pajak negara"], answer: 0, difficulty: "Sedang", explanation: "Membantu anak yatim merupakan amalan sosial-keagamaan yang sangat dimuliakan oleh Rasulullah SAW." },
+                    { text: "Hukum infaq dapat berubah menjadi HARAM apabila harta yang diinfakkan digunakan untuk...", options: ["A. Membangun sekolah", "B. Membeli minuman keras atau mendanai kemaksiatan", "C. Membeli buku pelajaran", "D. Menolong korban bencana"], answer: 1, difficulty: "Sedang", explanation: "Infaq menjadi haram jika ditujukan untuk mendukung perbuatan maksiat dan keharaman." },
+                    { text: "Infaq wajib contohnya adalah kewajiban suami dalam memberi...", options: ["A. Hadiah ulang tahun", "B. Nafkah lahir kepada anak dan istri", "C. Uang jajan tetangga", "D. Saham"], answer: 1, difficulty: "Sedang", explanation: "Nafkah keluarga merupakan kewajiban infaq yang hukumnya wajib bagi seorang kepala keluarga." },
+                    { text: "Niat utama dalam bersedekah agar diterima di sisi Allah SWT harus didasari oleh...", options: ["A. Keikhlasan mengharap ridha Allah", "B. Ingin dipuji dermawan oleh masyarakat", "C. Ingin masuk koran", "D. Agar dipilih jadi ketua RT"], answer: 0, difficulty: "Sedang", explanation: "Niat ikhlas semata-mata mengharap ridha Allah adalah syarat mutlak diterimanya ibadah." },
+                    { text: "Manfaat infaq dan sedekah bagi keberkahan harta benda pemiliknya adalah...", options: ["A. Harta menjadi cepat habis", "B. Harta bertambah berkah dan dilindungi dari bahaya", "C. Harta disita panitia", "D. Menambah beban pajak"], answer: 1, difficulty: "Sedang", explanation: "Sedekah tidak mengurangi harta secara hakiki, melainkan membuka pintu rezeki dan keberkahan." },
+
+                    // HOTS (10)
+                    { text: "Budi memiliki uang pas-pasan untuk ongkos pulang sekolah, namun ia melihat temannya tidak bisa jajan karena lupa bawa uang. Budi membagi dua uangnya. Nilai utama dari tindakan Budi adalah...", options: ["A. Sikap berfoya-foya", "B. Empati dan keutamaan mengutamakan orang lain (Itsar)", "C. Kelalaian mengelola uang", "D. Mencari popularitas"], answer: 1, difficulty: "HOTS", explanation: "Itsar adalah sikap mendahulukan kepentingan orang lain yang membutuhkan melebihi diri sendiri." },
+                    { text: "Mengapa ilmu yang bermanfaat yang diajarkan kepada orang lain digolongkan sebagai Sedekah Jariyah?", options: ["A. Karena ilmu membuat guru menjadi kaya", "B. Karena pahalanya terus mengalir selama ilmu tersebut diamalkan dan diajarkan kembali", "C. Karena ilmu tidak butuh uang", "D. Karena mengajarkan ilmu hukumnya wajib"], answer: 1, difficulty: "HOTS", explanation: "Pahala ilmu yang diajarkan akan berlipat ganda dan mengalir selama ilmu itu terus dimanfaatkan generasi berikutnya." },
+                    { text: "Seorang pengusaha bersedekah Rp 50 juta tetapi dipublikasikan di media sosial agar orang lain terinspirasi bersedekah. Bagaimana penilaian fikih terhadap niat tersebut?", options: ["A. Boleh jika niatnya murni mengedukasi (Ibtigha' Wajhillah), namun sangat rawan tergelincir Riya'", "B. Pasti haram tanpa terkecuali", "C. Otomatis menjadi zakat", "D. Bebas dosa"], answer: 0, difficulty: "HOTS", explanation: "Bersedekah secara terang-terangan diperbolehkan dalam Al-Qur'an (Surah Al-Baqarah: 271) selama menjaga hati dari riya'." },
+                    { text: "Jika seseorang bersedekah barang bekas yang sudah rusak total dan tidak layak pakai kepada panti asuhan, hal ini bertentangan dengan prinsip Al-Qur'an Surah Ali 'Imran ayat 92 yaitu...", options: ["A. Bersedekah harus dengan barang yang paling dicintai/layak", "B. Bersedekah harus dalam bentuk uang tunai", "C. Bersedekah tidak boleh kepada anak yatim", "D. Bersedekah wajib di depan umum"], answer: 0, difficulty: "HOTS", explanation: "Kutipan ayat: 'Kamu tidak akan memperoleh kebajikan sebelum kamu menginfakkan sebagian harta yang kamu cintai'." },
+                    { text: "Manakah skenario berikut yang menunjukkan tingkatan sedekah paling tinggi nilainya di sisi Allah?", options: ["A. Bersedekah saat kondisi sehat, lapang, dan membutuhkan harta tersebut", "B. Bersedekah saat sakaratul maut hampir tiba", "C. Bersedekah dari harta hasil curian", "D. Bersedekah hanya saat ada kamera"], answer: 0, difficulty: "HOTS", explanation: "Hadis Nabi: Sedekah paling utama adalah saat engkau sehat, merasa eman/butuh harta, dan takut miskin." },
+                    { text: "Apakah perbedaan mendasar dampak sosial antara orang yang gemar bersedekah dengan orang yang kikir di lingkungan masyarakat?", options: ["A. Dermawan dicintai dan menciptakan keharmonisan; kikir memicu kecemburuan sosial", "B. Dermawan selalu dibenci orang", "C. Orang kikir lebih banyak teman", "D. Tidak ada bedanya"], answer: 0, difficulty: "HOTS", explanation: "Kedermawanan mempererat tali silaturahmi sosial, sedangkan sifat kikir memicu isolasi dan ketimpangan." },
+                    { text: "Pak Amir mewakafkan sebidang tanah untuk pemakaman umum masyarakat. Wakaf ini merupakan bentuk khusus dari...", options: ["A. Zakat Maal", "B. Sedekah Jariyah berupa benda yang tahan lama", "C. Hadiah ulang tahun", "D. Pajak daerah"], answer: 1, difficulty: "HOTS", explanation: "Wakaf adalah bentuk sedekah jariyah dengan menahan pokok benda dan menyedekahkan manfaatnya secara berkelanjutan." },
+                    { text: "Bagaimana cara menyikapi seseorang yang meminta-minta dengan cara kurang sopan agar kita tetap menjaga nilai bersedekah?", options: ["A. Dimarahi dan dimaki-maki", "B. Membantu dengan sopan atau menolak dengan tutur kata yang baik (Qaulan Ma'rufa)", "C. Melaporkan ke polisi", "D. Dibiarkan tanpa kata-kata"], answer: 1, difficulty: "HOTS", explanation: "Al-Qur'an mengajarkan perkataan yang baik dan pemberian maaf lebih baik daripada sedekah yang diiringi tindakan menyakiti." },
+                    { text: "Mengapa amalan sedekah dikatakan dapat menolak bala (bencana/musibah)?", options: ["A. Karena sedekah menjadi sebab turunnya rahmat dan perlindungan Allah SWT", "B. Karena uang sedekah bisa membeli jimat", "C. Karena malaikat takut pada uang", "D. Karena musibah bisa dibeli"], answer: 0, difficulty: "HOTS", explanation: "Secara spiritual, kebaikan sedekah memadamkan kemurkaan Allah dan mengundang perlindungan-Nya dari marabahaya." },
+                    { text: "Siti tidak memiliki uang untuk bersedekah. Amalan apakah yang bisa dilakukan Siti yang bernilai setara sedekah menurut hadis Nabi?", options: ["A. Membaca tasbih, tahmid, takbir, dan amar ma'ruf nahi munkar", "B. Tidur seharian", "C. Diam saja di rumah", "D. Mengeluh"], answer: 0, difficulty: "HOTS", explanation: "Setiap tasbih, tahmid, tahlil, takbir, serta mengajak pada kebaikan adalah sedekah bagi yang tidak memiliki harta." }
+                ]
+            },
+            3: {
+                title: "BAB 3: KURBAN",
+                questions: [
+                    // EASY (5)
+                    { text: "Ibadah menyembelih hewan ternak pada hari Nahar dan Hari Tasyrik untuk mendekatkan diri kepada Allah dinamakan...", options: ["A. Aqiqah", "B. Kurban (Udhiyah)", "C. Walimah", "D. Zakat"], answer: 1, difficulty: "Mudah", explanation: "Kurban atau Udhiyah adalah penyembelihan hewan ternak tertentu pada hari Raya Idul Adha dan Hari Tasyrik." },
+                    { text: "Penyembelihan hewan kurban dilaksanakan pada tanggal 10 Zulhijah serta Hari Tasyrik yaitu tanggal...", options: ["A. 1, 2, 3 Muharram", "B. 11, 12, 13 Zulhijah", "C. 14, 15, 16 Ramadan", "D. 27, 28, 29 Rajab"], answer: 1, difficulty: "Mudah", explanation: "Hari Tasyrik adalah tanggal 11, 12, dan 13 bulan Zulhijah." },
+                    { text: "Hewan di bawah ini yang BOLEH dijadikan sebagai hewan kurban adalah...", options: ["A. Ayam dan Bebek", "B. Kambing, Sapi, Unta, dan Domba", "C. Kuda dan Kelinci", "D. Burung Unta"], answer: 1, difficulty: "Mudah", explanation: "Hewan kurban (Bahimatul An'am) terdiri dari unta, sapi/kerbau, kambing, dan domba." },
+                    { text: "Ibadah kurban mensyariatkan keteladanan dari sejarah Nabi...", options: ["A. Musa AS", "B. Ibrahim AS dan Ismail AS", "C. Isa AS", "D. Nuh AS"], answer: 1, difficulty: "Mudah", explanation: "Kurban memperingati peristiwa pengorbanan Nabi Ibrahim AS saat diperintahkan menyembelih putranya Nabi Ismail AS." },
+                    { text: "Hukum melaksanakan ibadah kurban bagi umat Islam yang mampu adalah...", options: ["A. Sunnah Muakkad", "B. Wajib 'Ain", "C. Haram", "D. Makruh"], answer: 0, difficulty: "Mudah", explanation: "Hukum kurban adalah Sunnah Muakkad (sunnah yang sangat dianjurkan) bagi yang sanggup." },
+
+                    // MEDIUM (10)
+                    { text: "Satu ekor kambing atau domba berlaku untuk kurban sebanyak...", options: ["A. 1 orang (beserta keluarga)", "B. 7 orang", "C. 10 orang", "D. 5 orang"], answer: 0, difficulty: "Sedang", explanation: "Satu ekor kambing/domba dicukupi untuk kurban 1 orang (dan pahalanya mencakup keluarga)." },
+                    { text: "Satu ekor sapi atau unta dapat digunakan untuk kurban secara patungan sebanyak maksimal...", options: ["A. 2 orang", "B. 5 orang", "C. 7 orang", "D. 10 orang"], answer: 2, difficulty: "Sedang", explanation: "Ketentuan syariat membolehkan patungan kurban sapi/unta untuk maksimal 7 orang." },
+                    { text: "Syarat minimal usia untuk kambing jawa/kacang yang sah dijadikan kurban adalah...", options: ["A. 6 bulan", "B. 1 tahun masuk tahun ke-2", "C. 2 tahun masuk tahun ke-3", "D. 5 tahun"], answer: 2, difficulty: "Sedang", explanation: "Kambing Jawa/Kacang minimal berusia 2 tahun (memasuki tahun ke-3)." },
+                    { text: "Di bawah ini yang merupakan cacat pada hewan yang menyebabkan TIDAK SAH dijadikan kurban adalah...", options: ["A. Gemuk dan sehat", "B. Buta sebelah, sakit parah, pincang, atau sangat kurus", "C. Bulunya bersih", "D. Tanduknya simetris"], answer: 1, difficulty: "Sedang", explanation: "Syarat hewan kurban harus bebas dari cacat nyata seperti buta, sakit, pincang, dan kurus kering." },
+                    { text: "Pembagian daging kurban yang disukai adalah dibagikan dalam kondisi...", options: ["A. Masih mentah / segar", "B. Sudah matang dimasak", "C. Digoreng tepung", "D. Dikalengkan saja"], answer: 0, difficulty: "Sedang", explanation: "Daging kurban disunnahkan dibagikan dalam keadaan mentah agar penerima bebas mengolahnya." },
+                    { text: "Hukum menjual kulit atau daging hewan kurban bagi orang yang berkurban (Muqorrib) adalah...", options: ["A. Boleh untuk beli bumbu", "B. Haram", "C. Sunnah", "D. Wajib"], answer: 1, difficulty: "Sedang", explanation: "Daging, kulit, atau bagian kurban haram dijual belikan oleh pekurban maupun panitia." },
+                    { text: "Kapan batas akhir waktu penyembelihan hewan kurban?", options: ["A. Tanggal 10 Zulhijah jam 12 malam", "B. Terbenam matahari pada tanggal 13 Zulhijah", "C. Tanggal 15 Zulhijah", "D. Akhir bulan Zulhijah"], answer: 1, difficulty: "Sedang", explanation: "Waktu kurban berakhir saat terbenamnya matahari pada tanggal 13 Zulhijah (akhir Hari Tasyrik)." },
+                    { text: "Orang yang melakukan kurban sunnah berhak mengambil bagian daging kurban maksimal sebanyak...", options: ["A. 1/3 bagian", "B. Seluruhnya", "C. 1/2 bagian", "D. Tidak boleh sama sekali"], answer: 0, difficulty: "Sedang", explanation: "Pekurban sunnah dianjurkan mengambil maksimal 1/3 bagian untuk dikonsumsi sendiri dan keluarga." },
+                    { text: "Jika seseorang bernazar untuk berkurban, maka hukum kurban baginya berubah menjadi...", options: ["A. Sunnah", "B. Wajib", "C. Makruh", "D. Mubah"], answer: 1, difficulty: "Sedang", explanation: "Nazar menjadikan amalan yang semula sunnah hukumnya menjadi wajib untuk dipenuhi." },
+                    { text: "Upah bagi tukang jagal / penyembelih hewan kurban TIDAK BOLEH diambilkan dari...", options: ["A. Uang kas panitia tersendiri", "B. Bagian daging atau kulit hewan kurban tersebut", "C. Uang pribadi pekurban", "D. Dana operasional"], answer: 1, difficulty: "Sedang", explanation: "Tukang jagal tidak boleh diupahi dari bagian fisik hewan kurban (daging/kulit). Upah harus dari dana tersendiri." },
+
+                    // HOTS (10)
+                    { text: "Pak Rahmad menyembelih kambing kurban pada tanggal 9 Zulhijah (Hari Arafah). Bagaimanakah keabsahan ibadah kurban Pak Rahmad?", options: ["A. Sah sebagai hewan kurban", "B. Tidak sah sebagai kurban, bernilai penyembelihan daging biasa", "C. Sah tapi pahalanya berkurang", "D. Wajib mengulang tahun depan"], answer: 1, difficulty: "HOTS", explanation: "Waktu kurban dimulai SETELAH salat Idul Fitri 10 Zulhijah. Penyembelihan sebelumnya dianggap daging biasa." },
+                    { text: "Mengapa pemberian gaji/upah penyembelih hewan kurban tidak boleh diambil dari daging/kulit hewan kurban itu sendiri?", options: ["A. Karena daging kurban harus dijual dulu", "B. Karena kurban adalah penyerahan total untuk Allah, bukan untuk alat pembayaran komersial", "C. Karena jagal tidak suka daging", "D. Karena aturan pemerintah"], answer: 1, difficulty: "HOTS", explanation: "Menjadikan kurban sebagai alat bayar upah mengurangi esensi penyerahan kurban secara murni." },
+                    { text: "Di sebuah desa miskin, panitia kurban mengalokasikan pembagian daging kurban: 70% untuk fakir miskin, 20% untuk warga mampu, dan 10% untuk pekurban. Apakah pembagian ini sesuai syariat?", options: ["A. Sesuai, karena mendahulukan prioritas fakir miskin yang lebih membutuhkan", "B. Batal kurbannya", "C. Harus dibagi rata persis 33%", "D. Haram"], answer: 0, difficulty: "HOTS", explanation: "Prioritas utama kurban adalah memberi makan fakir miskin, skema alokasi tersebut sangat relevan dan sah secara syariat." },
+                    { text: "Analisis nilai pendidikan karakter anak dari peristiwa Nabi Ibrahim AS yang bersedia mengurbankan putra tercintanya Nabi Ismail AS adalah...", options: ["A. Ketaatan mutlak kepada perintah Allah SWT di atas segalanya", "B. Keberanian menolak perintah", "C. Pentingnya memiliki hewan ternak banyak", "D. Tata cara berburu di padang pasir"], answer: 0, difficulty: "HOTS", explanation: "Kisah Kurban mengajarkan ujian keimanan tertinggi, ketaatan, dan keikhlasan menghambakan diri kepada Allah." },
+                    { text: "Apabila kambing kurban yang sudah dibeli tiba-tiba mengalami patah kaki karena kecelakaan yang tidak disengaja 1 jam sebelum disembelih, bagaimanakah statusnya?", options: ["A. Otomatis batal dan tidak boleh disembelih", "B. Tetap sah disembelih sebagai kurban karena cacat terjadi tanpa kelalaian setelah hewan ditetapkan", "C. Harus diganti sapi", "D. Berubah jadi aqiqah"], answer: 1, difficulty: "HOTS", explanation: "Menurut sebagian besar fuqaha, jika hewan kurban yang sudah ditentukan mengalami cacat tanpa unsur kelalaian pemilik, tetap sah disembelih." },
+                    { text: "Pak Anton bernazar: 'Jika anak saya lulus kuliah, saya akan berkurban 1 sapi'. Saat kurban nazar dilaksanakan, bolehkah Pak Anton memakan daging kurbannya?", options: ["A. Boleh sebanyak 1/3", "B. Tidak boleh memakan sedikit pun, seluruhnya wajib disedekahkan", "C. Boleh dihabiskan sendiri", "D. Boleh dijual setengahnya"], answer: 1, difficulty: "HOTS", explanation: "Pada kurban Nazar (wajib), pekurban dan keluarga yang wajib dinafkahinya haram memakan daging kurban tersebut." },
+                    { text: "Mengapa hewan kurban dianjurkan dipilihkannya yang paling gemuk, sehat, dan bagus penampilannya?", options: ["A. Agar bisa dipamerkan di media sosial", "B. Sebagai bentuk penghormatan dan persembahan terbaik untuk Allah SWT", "C. Supaya harganya mahal", "D. Agar tidak cepat habis"], answer: 1, difficulty: "HOTS", explanation: "Mengagungkan syiar Allah dilakukan dengan memberikan persembahan hewan kurban terbaik yang dimiliki." },
+                    { text: "Sebuah sekolah MI mengadakan kegiatan 'Latihan Kurban' dengan mengumpulkan iuran siswa untuk membeli sapi atas nama sekolah. Bagaimana kedudukan fiqih daging tersebut?", options: ["A. Sah sebagai Kurban Syar'i 7 orang", "B. Bernilai Sedekah Edukasi (Latihan), bukan kurban syar'i", "C. Haram dimakan", "D. Zakat fitrah"], answer: 1, difficulty: "HOTS", explanation: "Patungan iuran satu sekolah tidak memenuhi syarat kurban syar'i (maks 7 orang per sapi), namun pahalanya bernilai sedekah pembelajaran." },
+                    { text: "Apa hikmah utama pelarangan memotong kuku dan rambut bagi orang yang hendak berkurban sejak tanggal 1 Zulhijah hingga hewan disembelih?", options: ["A. Agar mirip orang ihram dan mendapatkan pengampunan dosa menyeluruh", "B. Agar hemat biaya salon", "C. Supaya kelihatan menakutkan", "D. Aturan kesehatan kulit"], answer: 0, difficulty: "HOTS", explanation: "Disunnahkan menahan diri dari potong kuku/rambut sebagai bentuk ketundukan menyerupai sebagian larangan ihram." },
+                    { text: "Bagaimana hukum orang yang mampu secara finansial tetapi enggan/tidak mau berkurban berdasarkan ancaman hadis Nabi?", options: ["A. Dianggap berdosa dan diancam: 'Janganlah mendekati tempat salat kami'", "B. Tetap masuk surga tanpa hisab", "C. Dihukum penjara", "D. Tidak ada dampak"], answer: 0, difficulty: "HOTS", explanation: "Nabi SAW memberikan peringatan keras bagi orang yang lapang rezekinya namun enggan berkurban." }
+                ]
+            },
+            4: {
+                title: "BAB 4: HAJI DAN UMRAH",
+                questions: [
+                    // EASY (5)
+                    { text: "Menyengaja mengunjungi Ka'bah di Makkah untuk melaksanakan ibadah tertentu pada waktu tertentu termasuk rukun Islam ke...", options: ["A. 3", "B. 4", "C. 5", "D. 2"], answer: 2, difficulty: "Mudah", explanation: "Haji adalah Rukun Islam yang ke-5 bagi umat Islam yang mampu." },
+                    { text: "Pakaian khusus berwarna putih tidak berjahit bagi laki-laki saat melaksanakan haji/umrah dinamakan pakaian...", options: ["A. Ihram", "B. Gamis", "C. Sarung", "D. Batik"], answer: 0, difficulty: "Mudah", explanation: "Pakaian Ihram untuk laki-laki berupa dua lembar kain putih tidak berjahit." },
+                    { text: "Mengelilingi Ka'bah sebanyak 7 kali putaran searah jarum jam dinamakan...", options: ["A. Sa'i", "B. Tawaf", "C. Wukuf", "D. Tahallul"], answer: 1, difficulty: "Mudah", explanation: "Tawaf adalah amalan mengelilingi Ka'bah sebanyak 7 kali putaran." },
+                    { text: "Berlari-lari kecil antara bukit Safa dan Marwah sebanyak 7 kali dinamakan...", options: ["A. Wukuf", "B. Sa'i", "C. Mabit", "D. Lempar Jumrah"], answer: 1, difficulty: "Mudah", explanation: "Sa'i adalah berjalan/berlari kecil dari Bukit Safa ke Bukit Marwah sebanyak 7 kali." },
+                    { text: "Memotong atau mencukur sekurang-kurangnya 3 helai rambut sebagai tanda selesainya tahapan haji dinamakan...", options: ["A. Tahallul", "B. Ihram", "C. Miqat", "D. Dam"], answer: 0, difficulty: "Mudah", explanation: "Tahallul adalah simbol melepaskan diri dari larangan ihram dengan mencukur/memotong rambut." },
+
+                    // MEDIUM (10)
+                    { text: "Inti dari pelaksanaan ibadah haji yang dilaksanakan di Padang Arafah pada tanggal 9 Zulhijah adalah...", options: ["A. Tawaf Wada'", "B. Wukuf", "C. Sa'i", "D. Melontar Jumrah Aqabah"], answer: 1, difficulty: "Sedang", explanation: "Wukuf di Arafah pada 9 Zulhijah merupakan rukun haji yang paling utama (Al-Hajju 'Arafah)." },
+                    { text: "Batas tempat atau waktu yang ditentukan untuk memulai niat ihram haji/umrah dinamakan...", options: ["A. Miqat", "B. Maqam Ibrahim", "C. Hijir Ismail", "D. Multazam"], answer: 0, difficulty: "Sedang", explanation: "Miqat adalah batas sempadan waktu (Zamani) atau tempat (Makani) untuk memulai niat ihram." },
+                    { text: "Perbedaan mendasar antara ibadah Haji dan Umrah terletak pada...", options: ["A. Umrah ada wukuf di Arafah, haji tidak ada", "B. Haji ada wukuf di Arafah dan terikat waktu tertentu, sedangkan Umrah tidak ada wukuf dan bisa kapan saja", "C. Umrah tidak pakai tawaf", "D. Haji tidak pakai ihram"], answer: 1, difficulty: "Sedang", explanation: "Umrah sering disebut haji kecil karena tidak memiliki rukun Wukuf di Arafah dan bebas waktu." },
+                    { text: "Di bawah ini yang merupakan RUKUN HAJI (jika ditinggalkan maka hajinya tidak sah) adalah...", options: ["A. Melontar Jumrah", "B. Wukuf di Arafah", "C. Bermalam di Muzdalifah", "D. Bermalam di Mina"], answer: 1, difficulty: "Sedang", explanation: "Wukuf, Niat Ihram, Tawaf Ziyarah, Sa'i, Tahallul, dan Tertib adalah Rukun Haji." },
+                    { text: "Tawaf perpisahan yang dilakukan sebelum jamaah meninggalkan kota Makkah dinamakan...", options: ["A. Tawaf Qudum", "B. Tawaf Ifadah", "C. Tawaf Wada'", "D. Tawaf Sunnah"], answer: 2, difficulty: "Sedang", explanation: "Tawaf Wada' adalah tawaf selamat tinggal saat akan meninggalkan kota suci Makkah." },
+                    { text: "Denda atau sanksi yang harus dibayar karena melanggar larangan ihram atau meninggalkan wajib haji disebut...", options: ["A. Fidyah", "B. Dam", "C. Nisab", "D. Infaq"], answer: 1, difficulty: "Sedang", explanation: "Dam secara bahasa berarti darah/denda yang dikeluarkan berupa menyembelih hewan atau puasa." },
+                    { text: "Syarat wajib haji 'Istitha'ah' memiliki arti...", options: ["A. Memiliki keturunan", "B. Mampu secara fisik, finansial, keamanan, dan mental", "C. Berusia tua", "D. Hafal Al-Qur'an"], answer: 1, difficulty: "Sedang", explanation: "Istitha'ah berarti memiliki kemampuan bekalan, kesehatan, keamanan perjalanan, dan nafkah keluarga." },
+                    { text: "Bermalam di Muzdalifah dan Mina termasuk dalam kategori...", options: ["A. Rukun Haji", "B. Wajib Haji", "C. Sunnah Haji", "D. Syarat Sah Shalat"], answer: 1, difficulty: "Sedang", explanation: "Mabit di Muzdalifah dan Mina hukumnya Wajib Haji (jika ditinggalkan bayar Dam, tapi haji tetap sah)." },
+                    { text: "Tempat berdoa yang sangat mustajab terletak antara Hajar Aswad dan pintu Ka'bah dinamakan...", options: ["A. Hijir Ismail", "B. Multazam", "C. Maqam Ibrahim", "D. Mas'a"], answer: 1, difficulty: "Sedang", explanation: "Multazam adalah dinding Ka'bah antara pintu Ka'bah dan Hajar Aswad." },
+                    { text: "Kalimat thoyyibah yang dikumandangkan jamaah haji 'Labbaikallahumma labbaik...' dinamakan bacaan...", options: ["A. Takbiratul Ihram", "B. Talbiyah", "C. Hauqolah", "D. Tahmid"], answer: 1, difficulty: "Sedang", explanation: "Bacaan Talbiyah adalah jawaban penuhi panggilan Allah SWT dalam ibadah haji/umrah." },
+
+                    // HOTS (10)
+                    { text: "Jika seorang jemaah haji meninggalkan salah satu RUKUN haji (misalnya tidak melaksanakan Wukuf di Arafah), maka status ibadah hajinya adalah...", options: ["A. Tetap sah asal bayar denda (Dam)", "B. Tidak sah dan tidak dapat diganti dengan Dam, wajib diulang tahun depan", "C. Sah tapi dapat dosa", "D. Cukup diganti puasa 10 hari"], answer: 1, difficulty: "HOTS", explanation: "Rukun haji menentukan keabsahan haji. Jika gugur rukun, haji batal dan wajib diulang." },
+                    { text: "Apakah perbedaan konsekuensi hukum antara meninggalkan RUKUN HAJI dengan meninggalkan WAJIB HAJI?", options: ["A. Rukun jika batal haji gugur; Wajib jika ditinggalkan hajinya sah tapi bayar Dam", "B. Tidak ada perbedaannya", "C. Rukun bayar denda; Wajib hajinya batal", "D. Rukun hukumnya sunnah"], answer: 0, difficulty: "HOTS", explanation: "Meninggalkan rukun = haji batal; Meninggalkan wajib = haji tetap sah tetapi wajib membayar denda (Dam)." },
+                    { text: "Pak Syamsul naik pesawat dari Jakarta langsung menuju Jeddah untuk umrah. Di mana ia harus mulai berniat ihram (Miqat Makani)?", options: ["A. Di dalam pesawat saat melintas di atas Yalamlam / King Abdulaziz Airport", "B. Setelah sampai di hotel Madinah", "C. Saat kembali ke Indonesia", "D. Bebas di mana saja"], answer: 0, difficulty: "HOTS", explanation: "Jemaah yang naik pesawat harus berniat ihram sebelum atau saat melintas sejajar di atas batas miqat." },
+                    { text: "Mengapa pakaian ihram laki-laki didesain sangat sederhana tanpa jahitan dan berwarna putih polos?", options: ["A. Agar hemat kain", "B. Simbol kesetaraan derajat manusia di hadapan Allah tanpa memandang status sosial", "C. Karena udara Makkah panas", "D. Aturan penerbangan"], answer: 1, difficulty: "HOTS", explanation: "Pakaian ihram melepas sekat kekayaan dan jabatan, melambangkan persamaan derajat hamba di hadapan Sang Pencipta." },
+                    { text: "Ibadah Haji Tamattu' adalah melaksanakan Umrah terlebih dahulu baru memakai ihram Haji. Mengapa jamaah yang memilih Haji Tamattu' diwajibkan membayar Dam (denda)?", options: ["A. Karena mereka bersenang-senang melepas ihram di antara umrah dan haji", "B. Karena hukumnya haram", "C. Karena tidak tawaf", "D. Denda keterlambatan"], answer: 0, difficulty: "HOTS", explanation: "Kemudahan menikmati waktu bebas (tahallul) di antara umrah dan haji dikenakan Dam ketaatan/kemudahan (Dam Syukur)." },
+                    { text: "Nabi Muhammad SAW menyebutkan bahwa 'Haji Mabrur tidak ada balasan baginya kecuali...'", options: ["A. Pujian dari masyarakat", "B. Surga", "C. Gelar pak haji", "D. Rezeki berlipat"], answer: 1, difficulty: "HOTS", explanation: "Hadis muttafaqun 'alaih: Haji mabrur (haji yang diterima dan membawa kebaikan) balasannya adalah surga." },
+                    { text: "Analisis sejarah dari amalan Sa'i antara Safa dan Marwah mengabadikan perjuangan seorang ibu bernama...", options: ["A. Siti Hawa", "B. Siti Hajar mencari air untuk bayinya Ismail", "C. Siti Khadijah", "D. Siti Aisyah"], answer: 1, difficulty: "HOTS", explanation: "Sa'i mengabadikan kegigihan dan tawakal Siti Hajar berlari mencari air hingga muncul mata air Zamzam." },
+                    { text: "Salah satu larangan ihram bagi laki-laki adalah menutup kepala dengan topi. Apabila seorang jemaah memakai topi karena kepalanya sakit tanpa sengaja, apa konsekuensinya?", options: ["A. Hajinya batal", "B. Sah hajinya, namun wajib membayar Fidyah/Dam karena melanggar larangan ihram dengan alasan udzur", "C. Tidak dimaafkan", "D. Harus pulang"], answer: 1, difficulty: "HOTS", explanation: "Melanggar larangan ihram karena udzur/keperluan medis diperbolehkan namun tetap wajib membayar fidyah." },
+                    { text: "Mengapa melempar Jumrah (Ula, Wustha, Aqabah) menggunakan batu kerikil disyariatkan dalam haji?", options: ["A. Simbol perlawanan dan pengusiran terhadap godaan setan sebagaimana Nabi Ibrahim AS", "B. Olahraga fisik", "C. Mengumpulkan batu di gurun", "D. Membangun tugu"], answer: 0, difficulty: "HOTS", explanation: "Melontar jumrah melembagakan peristiwa Nabi Ibrahim membatu setan yang menggoda ketaatannya." },
+                    { text: "Manakah di bawah ini yang mencerminkan hikmah sosial utama pelaksanaan ibadah Haji yang dihadiri jutaan umat dari seluruh dunia?", options: ["A. Mempererat persaudaraan Islam (Ukhuwah Islamiyah) secara global tanpa sekat ras & bangsa", "B. Ajang pamer kekayaan antar negara", "C. Tempat transaksi bisnis internasional", "D. Kompetisi fisik antar jemaah"], answer: 0, difficulty: "HOTS", explanation: "Haji merupakan muktamar akbar umat Islam sedunia untuk persatuan, perdamaian, dan ukhuwah." }
+                ]
+            }
+        };
+
+        // GLOBAL APP STATE
+        let currentStudentName = "";
+        let currentBab = 1;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        // HTML ELEMENT REFS
+        const screens = {
+            home: document.getElementById('home-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            result: document.getElementById('result-screen'),
+            review: document.getElementById('review-screen'),
+            guru: document.getElementById('guru-screen')
+        };
+
+        // NAVIGATION LOGIC
+        function showScreen(screenId) {
+            Object.keys(screens).forEach(key => {
+                screens[key].classList.add('hidden');
+            });
+            if (screenId === 'home-screen') screens.home.classList.remove('hidden');
+            if (screenId === 'quiz-screen') screens.quiz.classList.remove('hidden');
+            if (screenId === 'result-screen') screens.result.classList.remove('hidden');
+            if (screenId === 'review-screen') screens.review.classList.remove('hidden');
+            if (screenId === 'guru-screen') {
+                screens.guru.classList.remove('hidden');
+                renderGuruTable();
+            }
+        }
+
+        // SHUFFLE ARRAY (Fisher-Yates)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // START QUIZ
+        function startQuiz(babId) {
+            const nameInput = document.getElementById('student-name').value.trim();
+            const errorElement = document.getElementById('name-error');
+
+            if (!nameInput) {
+                errorElement.classList.remove('hidden');
+                return;
+            }
+            errorElement.classList.add('hidden');
+            currentStudentName = nameInput.toUpperCase();
+            currentBab = babId;
+
+            // Load and Shuffle Questions & Options
+            const babData = BANK_SOAL[babId];
+            let rawQuestions = JSON.parse(JSON.stringify(babData.questions));
+            
+            // Shuffle question order
+            currentQuestions = shuffleArray(rawQuestions).map(q => {
+                // Prepare option objects
+                let originalOptions = q.options.map((optText, idx) => ({
+                    text: optText.replace(/^[A-D]\.\s*/, ''),
+                    isCorrect: idx === q.answer
+                }));
+                // Shuffle options
+                let shuffledOptions = shuffleArray(originalOptions);
+                let newAnswerIndex = shuffledOptions.findIndex(o => o.isCorrect);
+
+                return {
+                    text: q.text,
+                    options: shuffledOptions.map((o, idx) => `${String.fromCharCode(65 + idx)}. ${o.text}`),
+                    answer: newAnswerIndex,
+                    difficulty: q.difficulty,
+                    explanation: q.explanation
+                };
+            });
+
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+
+            // Header UI Update
+            document.getElementById('quiz-bab-badge').textContent = babData.title;
+            document.getElementById('quiz-student-display').textContent = `SISWA: ${currentStudentName}`;
+
+            showScreen('quiz-screen');
+            renderQuestion();
+        }
+
+        // RENDER QUESTION
+        function renderQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            const total = currentQuestions.length;
+
+            // Progress UI
+            document.getElementById('quiz-progress-text').textContent = `Soal ${currentQuestionIndex + 1} / ${total}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuestionIndex + 1) / total) * 100}%`;
+
+            // Difficulty Tag Style
+            const diffTag = document.getElementById('question-difficulty-tag');
+            diffTag.textContent = q.difficulty;
+            if (q.difficulty === 'Mudah') {
+                diffTag.className = "text-xs font-semibold px-3 py-1 rounded-md bg-emerald-100 text-emerald-700";
+            } else if (q.difficulty === 'Sedang') {
+                diffTag.className = "text-xs font-semibold px-3 py-1 rounded-md bg-blue-100 text-blue-700";
+            } else {
+                diffTag.className = "text-xs font-semibold px-3 py-1 rounded-md bg-amber-100 text-amber-800";
+            }
+
+            // Question Text
+            document.getElementById('question-text').textContent = `${currentQuestionIndex + 1}. ${q.text}`;
+
+            // Hide Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.add('hidden');
+
+            // Render Options Buttons
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition font-medium text-sm sm:text-base text-slate-700 flex items-center justify-between group";
+                btn.onclick = () => selectOption(idx);
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-300 group-hover:text-emerald-500 text-lg"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // OPTION SELECTION & FEEDBACK
+        function selectOption(selectedIdx) {
+            const q = currentQuestions[currentQuestionIndex];
+            const isCorrect = selectedIdx === q.answer;
+
+            // Save User Answer
+            userAnswers.push({
+                question: q.text,
+                options: q.options,
+                userSelect: selectedIdx,
+                correctSelect: q.answer,
+                isCorrect: isCorrect,
+                explanation: q.explanation,
+                difficulty: q.difficulty
+            });
+
+            if (isCorrect) {
+                score += 4; // 25 questions * 4 = 100 max
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+
+            // Highlight Options
+            const container = document.getElementById('options-container');
+            const buttons = container.querySelectorAll('button');
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove('hover:border-emerald-500', 'hover:bg-emerald-50/50');
+                
+                if (idx === q.answer) {
+                    btn.className = "w-full text-left p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold text-sm sm:text-base flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-600 text-xl";
+                } else if (idx === selectedIdx && !isCorrect) {
+                    btn.className = "w-full text-left p-4 rounded-2xl border-2 border-red-500 bg-red-100 text-red-900 font-bold text-sm sm:text-base flex items-center justify-between";
+                    btn.querySelector('i').className = "fa-solid fa-circle-xmark text-red-600 text-xl";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-2xl border border-slate-200 text-slate-400 text-sm sm:text-base opacity-60 flex items-center justify-between";
+                }
+            });
+
+            // Instant Feedback Box
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackStatus = document.getElementById('feedback-status');
+            const feedbackExplanation = document.getElementById('feedback-explanation');
+
+            if (isCorrect) {
+                feedbackBox.className = "mt-6 p-4 rounded-2xl transition-all border border-emerald-300 bg-emerald-50 text-emerald-950 block";
+                feedbackStatus.className = "font-bold text-base mb-1 text-emerald-800 flex items-center";
+                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2 text-xl"></i> JAWABAN BENAR! (+4 Poin)`;
+            } else {
+                feedbackBox.className = "mt-6 p-4 rounded-2xl transition-all border border-red-300 bg-red-50 text-red-950 block";
+                feedbackStatus.className = "font-bold text-base mb-1 text-red-800 flex items-center";
+                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 mr-2 text-xl"></i> JAWABAN KURANG TEPAT`;
+            }
+
+            feedbackExplanation.textContent = q.explanation;
+        }
+
+        // NEXT QUESTION / FINISH
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // FINISH QUIZ & SHOW RESULT
+        function finishQuiz() {
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const wrongCount = userAnswers.length - correctCount;
+
+            // Save to localStorage
+            saveQuizResult({
+                name: currentStudentName,
+                bab: BANK_SOAL[currentBab].title,
+                score: score,
+                correct: correctCount,
+                wrong: wrongCount,
+                date: new Date().toLocaleString('id-ID')
+            });
+
+            // Update Result UI
+            document.getElementById('result-student-name').textContent = `SISWA: ${currentStudentName}`;
+            document.getElementById('result-score-number').textContent = score;
+            document.getElementById('result-correct-count').textContent = correctCount;
+            document.getElementById('result-wrong-count').textContent = wrongCount;
+
+            const badgeIcon = document.getElementById('score-badge-icon');
+            const statusBadge = document.getElementById('result-status-badge');
+
+            if (score >= 75) {
+                statusBadge.textContent = "SANGAT BAIK / TUNTAS";
+                statusBadge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300";
+                badgeIcon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-4xl mb-4 bg-yellow-100 text-yellow-600 shadow-inner";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-trophy"></i>`;
+                
+                // Trigger Sound & Celebration
+                playSound('cheer');
+                triggerConfetti();
+            } else {
+                statusBadge.textContent = "PERLU BELAJAR LAGI (BELUM TUNTAS)";
+                statusBadge.className = "inline-block px-4 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300";
+                badgeIcon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center text-4xl mb-4 bg-slate-100 text-slate-500";
+                badgeIcon.innerHTML = `<i class="fa-solid fa-book-open-reader"></i>`;
+            }
+
+            showScreen('result-screen');
+        }
+
+        // SHOW REVIEW SCREEN
+        function showReviewScreen() {
+            const container = document.getElementById('review-list-container');
+            container.innerHTML = '';
+
+            userAnswers.forEach((ans, idx) => {
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-2xl bg-white shadow-sm border ${ans.isCorrect ? 'border-emerald-200' : 'border-red-200'}`;
+
+                let optionsHtml = ans.options.map((opt, oIdx) => {
+                    let optStyle = "text-slate-600";
+                    if (oIdx === ans.correctSelect) optStyle = "text-emerald-700 font-bold";
+                    if (oIdx === ans.userSelect && !ans.isCorrect) optStyle = "text-red-600 line-through font-semibold";
+                    return `<li class="${optStyle} text-xs sm:text-sm my-1">${opt}</li>`;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded ${ans.isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                            Soal #${idx + 1} (${ans.difficulty}) - ${ans.isCorrect ? 'BENAR' : 'SALAH'}
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-2">${ans.question}</h4>
+                    <ul class="pl-4 list-disc mb-3 bg-slate-50 p-3 rounded-xl">${optionsHtml}</ul>
+                    <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-100 text-xs text-blue-900">
+                        <strong class="block mb-1 text-blue-800"><i class="fa-solid fa-lightbulb mr-1"></i> Pembahasan Syariat:</strong>
+                        ${ans.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            showScreen('review-screen');
+        }
+
+        // LOCALSTORAGE MANAGERS
+        function getStoredResults() {
+            return JSON.parse(localStorage.getItem('fikih_quiz_results') || '[]');
+        }
+
+        function saveQuizResult(resultObj) {
+            const data = getStoredResults();
+            data.unshift(resultObj); // new on top
+            localStorage.setItem('fikih_quiz_results', JSON.stringify(data));
+        }
+
+        function clearAllData() {
+            if (confirm("Apakah Anda yakin ingin menghapus seluruh data rekapitulasi nilai siswa?")) {
+                localStorage.removeItem('fikih_quiz_results');
+                renderGuruTable();
+            }
+        }
+
+        // GURU MODAL LOGIC
+        function openGuruModal() {
+            document.getElementById('guru-passcode').value = '';
+            document.getElementById('passcode-error').classList.add('hidden');
+            document.getElementById('guru-modal').classList.remove('hidden');
+        }
+
+        function closeGuruModal() {
+            document.getElementById('guru-modal').classList.add('hidden');
+        }
+
+        function verifyGuruPasscode() {
+            const pass = document.getElementById('guru-passcode').value;
+            if (pass === '1234') {
+                closeGuruModal();
+                showScreen('guru-screen');
+            } else {
+                document.getElementById('passcode-error').classList.remove('hidden');
+            }
+        }
+
+        // RENDER GURU TABLE
+        function renderGuruTable() {
+            const data = getStoredResults();
+            const searchVal = document.getElementById('guru-search-input').value.toLowerCase();
+            const filterBab = document.getElementById('guru-filter-bab').value;
+            const tbody = document.getElementById('guru-table-body');
+
+            tbody.innerHTML = '';
+
+            const filtered = data.filter(item => {
+                const matchName = item.name.toLowerCase().includes(searchVal);
+                const matchBab = filterBab === 'ALL' || item.bab.toUpperCase() === filterBab.toUpperCase();
+                return matchName && matchBab;
+            });
+
+            document.getElementById('rekap-count').textContent = `Total Data: ${filtered.length} Rekaman`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada rekapitulasi nilai yang tersimpan.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
+                    <td class="p-3 text-slate-500 text-xs">${item.date}</td>
+                    <td class="p-3 font-bold text-slate-800">${item.name}</td>
+                    <td class="p-3 font-medium text-emerald-700">${item.bab}</td>
+                    <td class="p-3 text-center font-bold text-base ${item.score >= 75 ? 'text-emerald-600' : 'text-red-500'}">${item.score}</td>
+                    <td class="p-3 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${item.score >= 75 ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                            ${item.score >= 75 ? 'TUNTAS' : 'REMIDI'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // EXPORT CSV
+        function exportToCSV() {
+            const data = getStoredResults();
+            if (data.length === 0) {
+                alert("Tidak ada data rekapitulasi untuk di-export!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "No,Tanggal,Nama Siswa,Materi BAB,Nilai,Status\n";
+
+            data.forEach((item, index) => {
+                const status = item.score >= 75 ? "TUNTAS" : "REMIDI";
+                csvContent += `${index + 1},"${item.date}","${item.name}","${item.bab}",${item.score},${status}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Nilai_Fikih_Kelas5_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // PRINT STUDENT RAPOR
+        function printStudentReport() {
+            const printArea = document.getElementById('printable-area');
+            const babTitle = BANK_SOAL[currentBab].title;
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const wrongCount = userAnswers.length - correctCount;
+
+            printArea.innerHTML = `
+                <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #16a34a; border-radius: 12px;">
+                    <div style="text-align: center; border-bottom: 2px double #16a34a; padding-bottom: 12px; margin-bottom: 20px;">
+                        <h2 style="margin: 0; color: #16a34a; font-size: 24px;">LAPORAN HASIL KUIS INTERAKTIF FIKIH</h2>
+                        <h3 style="margin: 5px 0 0 0; color: #333; font-size: 18px;">MADRASAH IBTIDAIYAH (MI) KELAS 5</h3>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; width: 150px;">Nama Siswa</td>
+                            <td style="padding: 6px;">: <strong>${currentStudentName}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold;">Materi Pembelajaran</td>
+                            <td style="padding: 6px;">: ${babTitle}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold;">Tanggal Ujian</td>
+                            <td style="padding: 6px;">: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                        </tr>
+                    </table>
+
+                    <div style="background-color: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 25px;">
+                        <span style="font-size: 14px; color: #166534; font-weight: bold;">NILAI AKHIR KUIS</span>
+                        <h1 style="font-size: 48px; margin: 10px 0; color: #16a34a;">${score}</h1>
+                        <p style="font-weight: bold; font-size: 16px; margin: 0; color: ${score >= 75 ? '#15803d' : '#b91c1c'};">
+                            STATUS: ${score >= 75 ? 'SANGAT BAIK / TUNTAS (MEMENUHI KKM)' : 'BELUM TUNTAS (PERLU REMIDI)'}
+                        </p>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; text-align: center;">
+                        <thead>
+                            <tr style="background-color: #e2e8f0;">
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Jumlah Soal</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; color: #16a34a;">Jawaban Benar</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px; color: #dc2626;">Jawaban Salah</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #cbd5e1; padding: 8px;">25 Soal</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 8px; font-weight: bold; color: #16a34a;">${correctCount}</td>
+                                <td style="border: 1px solid #cbd5e1; padding: 8px; font-weight: bold; color: #dc2626;">${wrongCount}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 50px; display: flex; justify-content: flex-end;">
+                        <div style="text-align: center; width: 250px;">
+                            <p style="margin-bottom: 60px;">Guru Pengampu Fikih,</p>
+                            <p style="font-weight: bold; border-bottom: 1px solid #333; margin-bottom: 4px; padding-bottom: 4px;">Muhammad Yunus, S.Pd.I.</p>
+                            <p style="font-size: 12px; color: #666; margin: 0;">NIP. -</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            printArea.classList.remove('hidden');
+            window.print();
+            printArea.classList.add('hidden');
+        }
+
+        // PRINT OFFICIAL GURU REPORT
+        function printGuruReport() {
+            const data = getStoredResults();
+            const printArea = document.getElementById('printable-area');
+
+            let rowsHtml = data.map((item, idx) => `
+                <tr>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${idx + 1}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${item.date}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px; font-weight: bold;">${item.name}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px;">${item.bab}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold;">${item.score}</td>
+                    <td style="border: 1px solid #cbd5e1; padding: 6px; text-align: center;">${item.score >= 75 ? 'TUNTAS' : 'REMIDI'}</td>
+                </tr>
+            `).join('');
+
+            printArea.innerHTML = `
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 22px;">REKAPITULASI NILAI KUIS INTERAKTIF FIKIH KELAS 5</h2>
+                        <h4 style="margin: 5px 0 0 0; font-weight: normal;">MADRASAH IBTIDAIYAH (MI)</h4>
+                    </div>
+
+                    <p style="font-size: 13px; margin-bottom: 15px;">Dicetak Tanggal: ${new Date().toLocaleDateString('id-ID')}</p>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px;">
+                        <thead>
+                            <tr style="background-color: #f1f5f9;">
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">No</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Waktu</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Nama Siswa</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Materi (BAB)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Nilai</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 8px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml || '<tr><td colspan="6" style="text-align:center; padding: 10px;">Belum ada data</td></tr>'}
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; justify-content: flex-end;">
+                        <div style="text-align: center; width: 250px;">
+                            <p style="margin-bottom: 60px;">Guru Pengampu Fikih,</p>
+                            <p style="font-weight: bold; border-bottom: 1px solid #333; margin-bottom: 4px; padding-bottom: 4px;">Muhammad Yunus, S.Pd.I.</p>
+                            <p style="font-size: 12px; color: #666; margin: 0;">NIP.-</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            printArea.classList.remove('hidden');
+            window.print();
+            printArea.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
